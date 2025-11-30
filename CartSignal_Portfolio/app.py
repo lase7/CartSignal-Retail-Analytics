@@ -2,16 +2,22 @@ import streamlit as st
 import joblib
 import pandas as pd
 import numpy as np
+import os  # <--- NEW IMPORT
 
-# --- 1. Load Model (Simplified: No Caching to prevent errors) ---
+# --- 1. Load Model (Path-Safe Version) ---
 def load_model():
-    # This expects 'cartsignal_model.pkl' to be in the same folder
-    return joblib.load('cartsignal_model.pkl')
+    # Get the folder where this app.py file is actually located
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Force Python to look in that specific folder
+    model_path = os.path.join(current_dir, 'cartsignal_model.pkl')
+    
+    return joblib.load(model_path)
 
 try:
     model = load_model()
 except FileNotFoundError:
-    st.error("Error: 'cartsignal_model.pkl' not found. Make sure it is in the same folder as this app.py file!")
+    st.error("Error: Model file not found. Ensure 'cartsignal_model.pkl' is in the exact same folder as app.py.")
     st.stop()
 
 # --- 2. App Interface ---
